@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NIV Bible: NP-Inference Decoder</title>
+    <style>
+        body { background: #000; color: #b0fbff; font-family: 'Courier New', monospace; padding: 20px; }
+        .console { border: 1px solid #444; padding: 20px; background: #050505; border-radius: 5px; box-shadow: 0 0 30px rgba(0, 255, 255, 0.1); }
+        .status { color: #ffcc00; margin-bottom: 10px; font-weight: bold; }
+        .stream-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .box { background: #111; border: 1px solid #222; padding: 10px; height: 300px; overflow-y: scroll; font-size: 12px; }
+        .secret-text { color: #39ff14; }
+        .controls { margin-top: 20px; display: flex; gap: 10px; }
+        button { flex: 1; padding: 15px; cursor: pointer; font-weight: bold; text-transform: uppercase; border: 1px solid #444; background: #222; color: #fff; }
+        button:hover { background: #333; border-color: #b0fbff; }
+        #haltBtn { background: #441111; }
+        #haltBtn:hover { background: #881111; }
+    </style>
+</head>
+<body>
+
+<div class="console">
+    <h2>[ PROJECT NP ] BIBLICAL NOISE EXTRACTION</h2>
+    <div id="status" class="status">SYSTEM IDLE - AWAITING PARAMETERS</div>
+
+    <div class="stream-container">
+        <div>
+            <strong>NIV SOURCE (CIPHERTEXT b)</strong>
+            <div id="nivBox" class="box"></div>
+        </div>
+        <div>
+            <strong>EXTRACTED SECRET (INFERRED s)</strong>
+            <div id="secretBox" class="box secret-text"></div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="startExtraction()">Begin Extraction</button>
+        <button id="haltBtn" onclick="haltProgram()">Halt & Regenerate</button>
+    </div>
+</div>
+
+<script>
+    let isRunning = false;
+    let interval;
+
+    // Simulation of Bible API Text (Placeholder for actual API integration)
+    const bibleVerses = [
+        "In the beginning God created the heaven and the earth.",
+        "And the earth was without form, and void; and darkness was upon the face of the deep.",
+        "And the Spirit of God moved upon the face of the waters.",
+        "And God said, Let there be light: and there was light.",
+        "And God saw the light, that it was good: and God divided the light from the darkness."
+    ];
+
+    function startExtraction() {
+        if(isRunning) return;
+        isRunning = true;
+        document.getElementById('status').innerText = "RUNNING: NP-INFERENCE ACTIVE...";
+        
+        let verseIdx = 0;
+        interval = setInterval(() => {
+            const verse = bibleVerses[verseIdx % bibleVerses.length];
+            processVerse(verse);
+            verseIdx++;
+        }, 1500);
+    }
+
+    function processVerse(text) {
+        const nivBox = document.getElementById('nivBox');
+        const secretBox = document.getElementById('secretBox');
+
+        // Show original text
+        nivBox.innerHTML += `> ${text}<br><br>`;
+        nivBox.scrollTop = nivBox.scrollHeight;
+
+        // Perform NP Inference assuming Bible word is "Noise"
+        // We treat the ASCII value as a noisy coefficient and "extract" a secret bit
+        let inferredSecret = "";
+        for (let i = 0; i < text.length; i++) {
+            let charCode = text.charCodeAt(i);
+            
+            // NP Logic: s = (b - e) mod q
+            // Here we assume e is randomized per session
+            let randomE = Math.floor(Math.random() * 10); 
+            let secretBit = (charCode - randomE) % 127; 
+            
+            // Filter back to visible character range or leave as gibberish
+            inferredSecret += String.fromCharCode(secretBit);
+        }
+
+        secretBox.innerHTML += `[INFERRED]: ${inferredSecret}<br><br>`;
+        secretBox.scrollTop = secretBox.scrollHeight;
+    }
+
+    function haltProgram() {
+        isRunning = false;
+        clearInterval(interval);
+        document.getElementById('status').innerText = "HALTED: PARAMETERS RESET. RE-RANDOMIZING ERROR GAUSSIAN...";
+        document.getElementById('nivBox').innerHTML = "";
+        document.getElementById('secretBox').innerHTML = "";
+    }
+</script>
+
+</body>
+</html>
