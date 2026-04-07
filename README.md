@@ -46,3 +46,4 @@ This project is part of a broader study into **Lattice-Based Cryptography** and 
 ---
 
 *Developed for algorithmic research at NTNU 資工系.*
+https://40947044s-creator.github.io/Bible-secret/
